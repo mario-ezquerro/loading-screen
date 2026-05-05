@@ -1,18 +1,22 @@
-# Contribution Guidelines
+# Contributing to The Loading Screen
 
-First, thanks. Secondly, and ironically, there is not much here yet. If you have any suggestions for how to improve this repository, please open an issue or a pull request.
+First off, thank you for being part of the "buffer" that makes this event great!
 
-If you have examples of great contributing docs, open a new PR with them. Please use this format:
+## How to Contribute
 
-  ` - [Name](link) _Comment on why it is awesome._ - [@YourName](https://github.com/YourName)`.
+### 1. Development Process
+1. **Create a Branch:** Always work on a separate branch (`git checkout -b feature/your-feature`).
+2. **Naming Convention:** Use English for all code entities and Git messages.
+3. **Local Testing:** Verify your changes locally using Docker to simulate the Cloud Run environment.
 
-Also:
+### 2. Pull Requests (PRs)
+* All PRs must be written in English.
+* Ensure CI/CD checks (GitHub Actions) pass before requesting a review.
+* At least one approval is required to merge into `main`.
 
-- Check your spelling and grammar.
-- Please add the entry in the correct section, in alphabetical order.
-- Search previous suggestions before making a new one, as yours may be a duplicate.
-- Make an individual pull request for each suggestion.
-- The pull request and commit should have a useful title.
-- Pull Requests without a personal comment will not be accepted until one is added.
+### 3. Deployment
+* Merges to `main` trigger an automated deployment to **Google Cloud Run**.
+* Ensure your `Dockerfile` exposes the correct port and handles SIGTERM signals for graceful shutdowns.
 
-Thank you!
+---
+*Stay calm and keep loading.*
