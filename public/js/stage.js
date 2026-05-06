@@ -118,177 +118,126 @@ const door = {
 // --- MUGGLE LOGIC ---
 const muggles = [];
 
-const jugglerTemplate = [
-    "0000000000111110000000000000",
-    "0000000011444441110000000000",
-    "0000000144444444441000000000",
-    "0000000144444444444100000000",
-    "0000000155555555555100000000",
-    "0000000111111111111100000000", 
-    "0000000122222222222100000000",
-    "0000000121122222112100000000", 
-    "0000000112212221221100000000", 
-    "0000000122222222222100000000",
-    "0000000121111111112100000000", 
-    "0000000121BBBBBBB12100000000", 
-    "0000000121111111112100000000", 
-    "0000000122222222222100000000", 
-    "0000000113333333331100000000", 
-    "0001110011111111111001110000", 
-    "0112211166666667771112211000", 
-    "1222222166666667771222222100", 
-    "1111111166666667771111111100", 
-    "0000000166666667771000000000", 
-    "0000000166666667771000000000",
-    "0000000166666667771000000000",
-    "0000000166666667771000000000",
-    "0000000166666667771000000000",
-    "0000000111111111111000000000", 
-    "0000000188888999991000000000", 
-    "0000000188888199991000000000", 
-    "0000000188881019991000000000",
-    "0000000188881019991000000000",
-    "0000000188881019991000000000",
-    "0000001AAAAA101AAAAA10000000", 
-    "0000001111111011111110000000"
-];
+let baseMuggleCanvas = null;
 
-const laptopTemplate = [
-    "0000000000111110000000000000",
-    "0000000011444441110000000000",
-    "0000000144444444441000000000",
-    "0000000144444444444100000000",
-    "0000000155555555555100000000",
-    "0000000111111111111100000000", 
-    "0000000122222222222100000000",
-    "0000000121122222112100000000", 
-    "0000000112212221221100000000", 
-    "0000000122222222222100000000",
-    "0000000121111111112100000000", 
-    "0000000121BBBBBBB12100000000", 
-    "0000000121111111112100000000", 
-    "0000000122222222222100000000", 
-    "0000000113333333331100000000", 
-    "0000000111111111111100000000", 
-    "0000001221666666771221000000", 
-    "0000012221666666771222100000", 
-    "0000012221666666771222100000", 
-    "0000001111111111111111000000", 
-    "0000001888888888888881000000",
-    "0000001888888888888881000000",
-    "000011CCCCCCCCCCCCCCCC110000",
-    "00001CCDDDDDDDDDDDDDDCC10000",
-    "00001CCDDDDDDDDDDDDDDCC10000",
-    "00001CCDDDDDDDDDDDDDDCC10000",
-    "00001CCCCCCCCCCCCCCCCCC10000",
-    "0000111111111111111111110000",
-    "0000001888881018888810000000",
-    "0000001888881018888810000000",
-    "000001AAAAA10001AAAAA1000000", 
-    "0000011111110001111111000000"
-];
-
-const supermanTemplate = [
-    "0000000000111110000000000000",
-    "0000000011444441110000000000",
-    "0000000144444444441000000000",
-    "0000000144444444444100000000",
-    "0000000155555555555100000000",
-    "0000000111111111111100000000", 
-    "0000000122222222222100000000",
-    "0000000121122222112100000000", 
-    "0000000112212221221100000000", 
-    "0000000122222222222100000000",
-    "0000000121111111112100000000", 
-    "0000000121BBBBBBB12100000000", 
-    "0000000121111111112100000000", 
-    "0000000122222222222100000000", 
-    "0000000113333333331100000000", 
-    "0000000111111111111100000000", 
-    "0000011166666667771110000000", 
-    "00011EE1666G6667771EE1100000", 
-    "001EEEE166GGG667771EEEE10000", 
-    "01EEEEE16GGGGG67771EEEEE1000", 
-    "1EEEEEE166GGG667771EEEEEE100",
-    "1EEEEEE1666G6667771EEEEEE100",
-    "1EEEEEF166666667771FEEEEE100",
-    "1EEEEEF166666667771FEEEEE100",
-    "1EEEEEF111111111111FEEEEE100", 
-    "1EEEEEF188888999991FEEEEE100", 
-    "1EEEEEF188888199991FEEEEE100", 
-    "01EEEEF188881019991FEEEE1000",
-    "01EEEEF188881019991FEEEE1000",
-    "001EEEF188881019991FEEE10000",
-    "00011111AAAAA101AAAAA1110000", 
-    "0000000111111101111111000000"
-];
-
-function generatePalette(isSuperman) {
-    const shade = (c, p) => {
-        let R = parseInt(c.substring(1,3),16), G = parseInt(c.substring(3,5),16), B = parseInt(c.substring(5,7),16);
-        R = parseInt(R * (100 + p) / 100); G = parseInt(G * (100 + p) / 100); B = parseInt(B * (100 + p) / 100);
-        R = R<255?R:255; G = G<255?G:255; B = B<255?B:255;
-        let RR = (R.toString(16).length==1?"0"+R.toString(16):R.toString(16));
-        let GG = (G.toString(16).length==1?"0"+G.toString(16):G.toString(16));
-        let BB = (B.toString(16).length==1?"0"+B.toString(16):B.toString(16));
-        return "#"+RR+GG+BB;
-    };
-    const hslToHex = (h, s, l) => {
-        l /= 100; const a = s * Math.min(l, 1 - l) / 100;
-        const f = n => { const k = (n + h / 30) % 12; const color = l - a * Math.max(Math.min(k - 3, 9 - k, 1), -1); return Math.round(255 * color).toString(16).padStart(2, '0'); };
-        return `#${f(0)}${f(8)}${f(4)}`;
-    };
-
-    const skins = ['#fde0c4', '#f5c6a5', '#e1a980', '#c88661', '#975638', '#5c3624'];
-    const skinBase = skins[Math.floor(Math.random() * skins.length)];
-    const hairs = ['#fef08a', '#d97706', '#78350f', '#1c1917', '#dc2626', '#10b981', '#3b82f6'];
-    const hairBase = isSuperman ? '#1c1917' : hairs[Math.floor(Math.random() * hairs.length)];
-    const shirtBase = isSuperman ? '#2563eb' : hslToHex(Math.random()*360, 70+Math.random()*30, 50+Math.random()*20);
-    const pantsBase = isSuperman ? '#2563eb' : hslToHex(Math.random()*360, 40+Math.random()*40, 30+Math.random()*20);
-    const shoes = ['#ffffff', '#475569', '#1e293b', '#b91c1c'];
-    const shoeBase = isSuperman ? '#dc2626' : shoes[Math.floor(Math.random() * shoes.length)];
-
-    return {
-        '0': null,
-        '1': '#020617', '2': skinBase, '3': shade(skinBase, -20),
-        '4': hairBase, '5': shade(hairBase, -30),
-        '6': shirtBase, '7': shade(shirtBase, -30),
-        '8': pantsBase, '9': shade(pantsBase, -40),
-        'A': shoeBase, 'B': '#ffffff', 'C': '#94a3b8', 'D': '#38bdf8', 'E': '#dc2626', 'F': '#991b1b', 'G': '#facc15'
-    };
-}
-
-function generateMuggleCanvas() {
-    const templates = [jugglerTemplate, laptopTemplate, supermanTemplate];
-    const tIndex = Math.floor(Math.random() * templates.length);
-    const template = templates[tIndex];
-    const palette = generatePalette(tIndex === 2);
+const refImage = new Image();
+refImage.src = '/images/muggle-01.jpg';
+refImage.onload = () => {
+    const tempCanvas = document.createElement('canvas');
+    tempCanvas.width = refImage.width;
+    tempCanvas.height = refImage.height;
+    const ctx = tempCanvas.getContext('2d');
+    ctx.drawImage(refImage, 0, 0);
     
-    const cols = template[0].length;
-    const rows = template.length;
-    const off = document.createElement('canvas');
-    off.width = cols; off.height = rows;
-    const ctx = off.getContext('2d');
+    const imgData = ctx.getImageData(0, 0, tempCanvas.width, tempCanvas.height);
+    const data = imgData.data;
     
-    for (let y = 0; y < rows; y++) {
-        for (let x = 0; x < cols; x++) {
-            const char = template[y][x];
-            if (palette[char]) {
-                ctx.fillStyle = palette[char];
-                ctx.fillRect(x, y, 1, 1);
+    // Assume top-left pixel is background color
+    const bgR = data[0];
+    const bgG = data[1];
+    const bgB = data[2];
+    const threshold = 60; // Tolerance for background color
+    
+    let minX = tempCanvas.width, minY = tempCanvas.height, maxX = 0, maxY = 0;
+    
+    for (let y = 0; y < tempCanvas.height; y++) {
+        for (let x = 0; x < tempCanvas.width; x++) {
+            const i = (y * tempCanvas.width + x) * 4;
+            const r = data[i], g = data[i+1], b = data[i+2];
+            
+            const dist = Math.sqrt(Math.pow(r - bgR, 2) + Math.pow(g - bgG, 2) + Math.pow(b - bgB, 2));
+            if (dist < threshold) {
+                data[i+3] = 0; // Make transparent
+            } else {
+                if (x < minX) minX = x;
+                if (x > maxX) maxX = x;
+                if (y < minY) minY = y;
+                if (y > maxY) maxY = y;
             }
         }
     }
     
-    if(tIndex === 0) { // Add juggling items
-        ctx.fillStyle = palette['1']; ctx.fillRect(1, 2, 7, 5); // outline controller
-        ctx.fillStyle = palette['C']; ctx.fillRect(2, 3, 5, 3); // body controller
-        ctx.fillStyle = palette['D']; ctx.fillRect(3, 4, 1, 1); // dpad
-        
-        ctx.fillStyle = palette['1']; ctx.fillRect(20, 3, 6, 6); // outline git block
-        ctx.fillStyle = '#dc2626'; ctx.fillRect(21, 4, 4, 4); // red block
-        ctx.fillStyle = palette['B']; ctx.fillRect(22, 5, 2, 2); // white detail
+    ctx.putImageData(imgData, 0, 0);
+    
+    // Crop it closely to remove empty space
+    baseMuggleCanvas = document.createElement('canvas');
+    baseMuggleCanvas.width = maxX - minX + 1;
+    baseMuggleCanvas.height = maxY - minY + 1;
+    const bCtx = baseMuggleCanvas.getContext('2d');
+    bCtx.drawImage(tempCanvas, minX, minY, baseMuggleCanvas.width, baseMuggleCanvas.height, 0, 0, baseMuggleCanvas.width, baseMuggleCanvas.height);
+};
+
+function generateMuggleCanvas() {
+    if (!baseMuggleCanvas) return null;
+    
+    const off = document.createElement('canvas');
+    off.width = baseMuggleCanvas.width;
+    off.height = baseMuggleCanvas.height;
+    const ctx = off.getContext('2d');
+    ctx.drawImage(baseMuggleCanvas, 0, 0);
+    
+    const imgData = ctx.getImageData(0, 0, off.width, off.height);
+    const data = imgData.data;
+    
+    // Random hue shift amount
+    const hueShift = Math.random() * 360;
+    
+    function rgbToHsl(r, g, b) {
+        r /= 255; g /= 255; b /= 255;
+        let max = Math.max(r, g, b), min = Math.min(r, g, b);
+        let h, s, l = (max + min) / 2;
+        if(max == min){ h = s = 0; } else {
+            let d = max - min;
+            s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+            switch(max){
+                case r: h = (g - b) / d + (g < b ? 6 : 0); break;
+                case g: h = (b - r) / d + 2; break;
+                case b: h = (r - g) / d + 4; break;
+            }
+            h /= 6;
+        }
+        return [h * 360, s, l];
     }
+    
+    function hslToRgb(h, s, l) {
+        let r, g, b;
+        h /= 360;
+        if(s == 0){ r = g = b = l; } else {
+            let hue2rgb = function(p, q, t){
+                if(t < 0) t += 1;
+                if(t > 1) t -= 1;
+                if(t < 1/6) return p + (q - p) * 6 * t;
+                if(t < 1/2) return q;
+                if(t < 2/3) return p + (q - p) * (2/3 - t) * 6;
+                return p;
+            }
+            let q = l < 0.5 ? l * (1 + s) : l + s - l * s;
+            let p = 2 * l - q;
+            r = hue2rgb(p, q, h + 1/3);
+            g = hue2rgb(p, q, h);
+            b = hue2rgb(p, q, h - 1/3);
+        }
+        return [Math.round(r * 255), Math.round(g * 255), Math.round(b * 255)];
+    }
+
+    for (let i = 0; i < data.length; i += 4) {
+        if (data[i+3] > 0) { // If not transparent
+            const r = data[i], g = data[i+1], b = data[i+2];
+            let [h, s, l] = rgbToHsl(r, g, b);
+            
+            // Shift colors that are not skin tone (skin is usually hue 10-40, low saturation)
+            // The original shirt is teal (hue ~180), pants are purple/blue (hue ~260)
+            if (s > 0.1 && (h > 45 || h < 5)) {
+                h = (h + hueShift) % 360;
+                const [nr, ng, nb] = hslToRgb(h, s, l);
+                data[i] = nr;
+                data[i+1] = ng;
+                data[i+2] = nb;
+            }
+        }
+    }
+    
+    ctx.putImageData(imgData, 0, 0);
     return off;
 }
 
@@ -316,6 +265,10 @@ class Muggle {
 
     draw() {
         if(this.progress >= 1) return;
+        if(!this.image) {
+            this.image = generateMuggleCanvas();
+            if(!this.image) return; // Wait until loaded
+        }
 
         // Base size increased to make them "appear larger"
         const width = 200 * this.scale;
