@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Stage - Loading Screen</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+    <!-- QR Code Generator CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/qrcode/build/qrcode.min.js"></script>
+    <script src="/socket.io/socket.io.js"></script>
+</head>
+<body class="stage-body">
+    <!-- Splash Screen Overlay -->
+    <div id="splashScreen">
+        <img src="/images/screem-01.jpg" alt="The Loading Screen" class="splash-img">
+        <div class="splash-text">CLICK ANYWHERE TO BOOT UP...</div>
+    </div>
+
+    <!-- Canvas for Muggle March rendering -->
+    <canvas id="stageCanvas"></canvas>
+    
+    <!-- QR Code Overlay -->
+    <div id="overlay">
+        <div class="qr-container">
+            <h2>Join the March</h2>
+            <canvas id="qrCode"></canvas>
+            <p>Scan to launch your Muggle</p>
+        </div>
+    </div>
+    
+    <!-- Audio loop for epic orchestral music (Autoplay policies require a user interaction first) -->
+    <audio id="bgMusic" loop>
+        <source src="https://assets.mixkit.co/music/preview/mixkit-epic-orchestra-transition-2290.mp3" type="audio/mpeg">
+    </audio>
+
+    <script src="/js/stage.js"></script>
+</body>
+</html>

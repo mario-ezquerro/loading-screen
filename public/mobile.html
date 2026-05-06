@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Launch Control</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <script src="/socket.io/socket.io.js"></script>
+</head>
+<body class="mobile-body">
+    <div class="mobile-container">
+        <h1>Muggle Launcher</h1>
+        
+        <div id="setupSection" class="glass-panel">
+            <input type="text" id="muggleMessage" maxlength="25" placeholder="Enter message (max 25 chars)..." autocomplete="off">
+            <div class="char-count"><span id="charCount">0</span>/25</div>
+            <!-- CRITICAL: User interaction required to request DeviceMotion API permissions -->
+            <button id="readyBtn" class="btn-primary">Ready to Launch</button>
+        </div>
+
+        <div id="launchSection" class="glass-panel hidden">
+            <h2 class="pulse-text">Shake to Launch!</h2>
+            <p>Your Muggle is ready. Shake your phone to send it to the Stage.</p>
+            <p style="margin: 20px 0; color: #94a3b8; font-size: 0.9rem;">- OR -</p>
+            <button id="manualLaunchBtn" class="btn-primary">Tap to Launch</button>
+        </div>
+    </div>
+
+    <script src="/js/mobile.js"></script>
+</body>
+</html>
