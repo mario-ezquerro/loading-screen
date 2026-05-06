@@ -180,7 +180,8 @@ class Muggle {
         this.progress += this.speed;
         if(this.progress > 1) this.progress = 1;
         
-        this.scale = 1 - Math.pow(this.progress, 0.6);
+        // Curve changed to keep them large for longer (staying near 1 until the end)
+        this.scale = 1 - Math.pow(this.progress, 3.5);
         this.currentX = this.startX + (doorX - this.startX) * this.progress;
         this.currentY = this.startY + ((doorY + 40) - this.startY) * this.progress; 
     }
@@ -188,8 +189,9 @@ class Muggle {
     draw() {
         if(this.progress >= 1) return;
 
-        const width = 120 * this.scale;
-        const height = 120 * this.scale;
+        // Base size increased to make them "appear larger"
+        const width = 200 * this.scale;
+        const height = 200 * this.scale;
         
         ctx.save();
         ctx.translate(this.currentX, this.currentY);
@@ -198,20 +200,20 @@ class Muggle {
         
         ctx.drawImage(this.image, -width/2, -height + walkBounce, width, height);
         
-        if(this.scale > 0.15) { 
+        if(this.scale > 0.1) { 
             ctx.fillStyle = `rgba(255, 255, 255, ${this.scale})`;
-            ctx.font = `${10 * this.scale}px "Press Start 2P", monospace`;
+            ctx.font = `${14 * this.scale}px "Press Start 2P", monospace`;
             ctx.textAlign = 'center';
             
             const padding = 8 * this.scale;
             const textWidth = ctx.measureText(this.message).width;
             ctx.fillStyle = `rgba(15, 23, 42, ${this.scale * 0.9})`;
             ctx.beginPath();
-            ctx.roundRect(-textWidth/2 - padding, -height - (30 * this.scale) + walkBounce - padding, textWidth + padding*2, (18 * this.scale) + padding*2, 8 * this.scale);
+            ctx.roundRect(-textWidth/2 - padding, -height - (40 * this.scale) + walkBounce - padding, textWidth + padding*2, (22 * this.scale) + padding*2, 8 * this.scale);
             ctx.fill();
             
             ctx.fillStyle = `rgba(248, 250, 252, ${this.scale})`;
-            ctx.fillText(this.message, 0, -height - (18 * this.scale) + walkBounce);
+            ctx.fillText(this.message, 0, -height - (22 * this.scale) + walkBounce);
         }
         
         ctx.restore();
