@@ -118,63 +118,77 @@ const door = {
 // --- MUGGLE LOGIC ---
 const muggles = [];
 
-let baseMuggleCanvas = null;
+const baseMuggleCanvases = [];
+const muggleImages = [
+    '/images/muggle-01.jpg',
+    '/images/muggle-02.png',
+    '/images/muggle-03.png',
+    '/images/muggle-04.png',
+    '/images/muggle-05.png'
+];
 
-const refImage = new Image();
-refImage.src = '/images/muggle-01.jpg';
-refImage.onload = () => {
-    const tempCanvas = document.createElement('canvas');
-    tempCanvas.width = refImage.width;
-    tempCanvas.height = refImage.height;
-    const ctx = tempCanvas.getContext('2d');
-    ctx.drawImage(refImage, 0, 0);
-    
-    const imgData = ctx.getImageData(0, 0, tempCanvas.width, tempCanvas.height);
-    const data = imgData.data;
-    
-    // Assume top-left pixel is background color
-    const bgR = data[0];
-    const bgG = data[1];
-    const bgB = data[2];
-    const threshold = 60; // Tolerance for background color
-    
-    let minX = tempCanvas.width, minY = tempCanvas.height, maxX = 0, maxY = 0;
-    
-    for (let y = 0; y < tempCanvas.height; y++) {
-        for (let x = 0; x < tempCanvas.width; x++) {
-            const i = (y * tempCanvas.width + x) * 4;
-            const r = data[i], g = data[i+1], b = data[i+2];
-            
-            const dist = Math.sqrt(Math.pow(r - bgR, 2) + Math.pow(g - bgG, 2) + Math.pow(b - bgB, 2));
-            if (dist < threshold) {
-                data[i+3] = 0; // Make transparent
-            } else {
-                if (x < minX) minX = x;
-                if (x > maxX) maxX = x;
-                if (y < minY) minY = y;
-                if (y > maxY) maxY = y;
+muggleImages.forEach((src) => {
+    const refImage = new Image();
+    refImage.src = src;
+    refImage.onload = () => {
+        const tempCanvas = document.createElement('canvas');
+        tempCanvas.width = refImage.width;
+        tempCanvas.height = refImage.height;
+        const ctx = tempCanvas.getContext('2d');
+        ctx.drawImage(refImage, 0, 0);
+        
+        const imgData = ctx.getImageData(0, 0, tempCanvas.width, tempCanvas.height);
+        const data = imgData.data;
+        
+        // Assume top-left pixel is background color
+        const bgR = data[0];
+        const bgG = data[1];
+        const bgB = data[2];
+        const threshold = 60; // Tolerance for background color
+        
+        let minX = tempCanvas.width, minY = tempCanvas.height, maxX = 0, maxY = 0;
+        
+        for (let y = 0; y < tempCanvas.height; y++) {
+            for (let x = 0; x < tempCanvas.width; x++) {
+                const i = (y * tempCanvas.width + x) * 4;
+                const r = data[i], g = data[i+1], b = data[i+2];
+                
+                const dist = Math.sqrt(Math.pow(r - bgR, 2) + Math.pow(g - bgG, 2) + Math.pow(b - bgB, 2));
+                if (dist < threshold) {
+                    data[i+3] = 0; // Make transparent
+                } else {
+                    if (x < minX) minX = x;
+                    if (x > maxX) maxX = x;
+                    if (y < minY) minY = y;
+                    if (y > maxY) maxY = y;
+                }
             }
         }
-    }
-    
-    ctx.putImageData(imgData, 0, 0);
-    
-    // Crop it closely to remove empty space
-    baseMuggleCanvas = document.createElement('canvas');
-    baseMuggleCanvas.width = maxX - minX + 1;
-    baseMuggleCanvas.height = maxY - minY + 1;
-    const bCtx = baseMuggleCanvas.getContext('2d');
-    bCtx.drawImage(tempCanvas, minX, minY, baseMuggleCanvas.width, baseMuggleCanvas.height, 0, 0, baseMuggleCanvas.width, baseMuggleCanvas.height);
-};
+        
+        ctx.putImageData(imgData, 0, 0);
+        
+        // Crop it closely to remove empty space
+        const croppedCanvas = document.createElement('canvas');
+        croppedCanvas.width = maxX - minX + 1;
+        croppedCanvas.height = maxY - minY + 1;
+        const bCtx = croppedCanvas.getContext('2d');
+        bCtx.drawImage(tempCanvas, minX, minY, croppedCanvas.width, croppedCanvas.height, 0, 0, croppedCanvas.width, croppedCanvas.height);
+        
+        baseMuggleCanvases.push(croppedCanvas);
+    };
+});
 
 function generateMuggleCanvas() {
-    if (!baseMuggleCanvas) return null;
+    if (baseMuggleCanvases.length === 0) return null;
+    
+    // Pick a random base canvas
+    const baseCanvas = baseMuggleCanvases[Math.floor(Math.random() * baseMuggleCanvases.length)];
     
     const off = document.createElement('canvas');
-    off.width = baseMuggleCanvas.width;
-    off.height = baseMuggleCanvas.height;
+    off.width = baseCanvas.width;
+    off.height = baseCanvas.height;
     const ctx = off.getContext('2d');
-    ctx.drawImage(baseMuggleCanvas, 0, 0);
+    ctx.drawImage(baseCanvas, 0, 0);
     
     const imgData = ctx.getImageData(0, 0, off.width, off.height);
     const data = imgData.data;
