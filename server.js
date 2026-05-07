@@ -23,6 +23,21 @@ app.get('/health', (req, res) => {
   res.status(200).send('OK');
 });
 
+// Dynamic music track listing
+const fs = require('fs');
+app.get('/api/tracks', (req, res) => {
+  const audioDir = path.join(__dirname, 'public', 'audio');
+  fs.readdir(audioDir, (err, files) => {
+    if (err) {
+      return res.status(500).json({ error: 'Unable to read audio directory' });
+    }
+    // Filter for audio files and exclude INFO.txt
+    const tracks = files.filter(file => /\.(mp3|wav|ogg)$/i.test(file));
+    res.json(tracks);
+  });
+});
+
+
 // Real-time connections handling
 io.on('connection', (socket) => {
   console.log(`[+] New connection: ${socket.id}`);

@@ -2,6 +2,32 @@ const socket = io();
 const canvas = document.getElementById('stageCanvas');
 const ctx = canvas.getContext('2d');
 const bgMusic = document.getElementById('bgMusic');
+
+// --- DYNAMIC 8-BIT PLAYLIST SYSTEM ---
+let availableTracks = [];
+
+function playRandomTrack() {
+    if (availableTracks.length > 0) {
+        const randomTrack = availableTracks[Math.floor(Math.random() * availableTracks.length)];
+        bgMusic.src = `/audio/${randomTrack}`;
+        bgMusic.play().catch(e => console.log("Waiting for user interaction to play next track..."));
+        console.log(`[Music] Playing next: ${randomTrack}`);
+    }
+}
+
+fetch('/api/tracks')
+    .then(response => response.json())
+    .then(tracks => {
+        availableTracks = tracks;
+        playRandomTrack();
+    })
+    .catch(err => console.error('Error loading tracks:', err));
+
+// Listen for the end of the track to play the next one
+bgMusic.addEventListener('ended', playRandomTrack);
+
+
+
 let circuitCanvas = document.createElement('canvas');
 
 function renderCircuitBackground() {
@@ -319,11 +345,60 @@ socket.on('muggle_spawned', (data) => {
     muggles.push(new Muggle(data.id, data.message));
 });
 
+function drawPerspectivePath(targetX, targetY) {
+    const horizonY = targetY + 40; 
+    const pathWidthBottom = canvas.width * 0.8;
+    const pathWidthTop = 60;
+    
+    ctx.save();
+    
+    const pathGradient = ctx.createLinearGradient(0, horizonY, 0, canvas.height);
+    pathGradient.addColorStop(0, 'rgba(56, 189, 248, 0.0)'); 
+    pathGradient.addColorStop(0.4, 'rgba(56, 189, 248, 0.12)');
+    pathGradient.addColorStop(1, 'rgba(56, 189, 248, 0.02)');
+    
+    ctx.fillStyle = pathGradient;
+    ctx.beginPath();
+    ctx.moveTo(targetX - pathWidthTop / 2, horizonY);
+    ctx.lineTo(targetX + pathWidthTop / 2, horizonY);
+    ctx.lineTo(canvas.width / 2 + pathWidthBottom / 2, canvas.height);
+    ctx.lineTo(canvas.width / 2 - pathWidthBottom / 2, canvas.height);
+    ctx.closePath();
+    ctx.fill();
+
+    ctx.strokeStyle = 'rgba(56, 189, 248, 0.2)';
+    ctx.lineWidth = 1;
+    
+    // Perspective vertical lines
+    for(let i = -5; i <= 5; i++) {
+        ctx.beginPath();
+        ctx.moveTo(targetX + (pathWidthTop / 10) * i, horizonY);
+        ctx.lineTo(canvas.width / 2 + (pathWidthBottom / 10) * i, canvas.height);
+        ctx.stroke();
+    }
+    
+    // Perspective horizontal lines
+    for(let i = 0; i < 10; i++) {
+        const p = Math.pow(i / 10, 2);
+        const y = horizonY + p * (canvas.height - horizonY);
+        const currentW = pathWidthTop + (pathWidthBottom - pathWidthTop) * p;
+        const currentCenterX = targetX + (canvas.width / 2 - targetX) * p;
+        
+        ctx.beginPath();
+        ctx.moveTo(currentCenterX - currentW / 2, y);
+        ctx.lineTo(currentCenterX + currentW / 2, y);
+        ctx.stroke();
+    }
+    
+    ctx.restore();
+}
+
 function animate() {
     // Draw the static circuit board background
     ctx.drawImage(circuitCanvas, 0, 0);
     
     door.update();
+    drawPerspectivePath(door.x, door.y);
     door.draw(ctx);
     
     ctx.imageSmoothingEnabled = false; 

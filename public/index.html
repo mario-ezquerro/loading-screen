@@ -29,9 +29,9 @@
         </div>
     </div>
     
-    <!-- Audio loop for epic orchestral music (Autoplay policies require a user interaction first) -->
-    <audio id="bgMusic" loop>
-        <source src="https://assets.mixkit.co/music/preview/mixkit-epic-orchestra-transition-2290.mp3" type="audio/mpeg">
+    <!-- Audio playlist for epic 8-bit orchestral music -->
+    <audio id="bgMusic" onplay="console.log('Audio started playing')" onerror="console.error('Audio error:', this.error)">
+        <!-- Source is set dynamically in stage.js -->
     </audio>
 
     <script src="/js/stage.js"></script>
