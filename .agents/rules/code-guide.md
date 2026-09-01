@@ -22,7 +22,12 @@ trigger: always_on
     * `docs:` Documentation changes only.
     * `chore:` Maintenance tasks, dependencies, etc.
 
-## 3. Technical Constraints (Cloud Run)
+## 3. Technical Constraints & Deployment (Cloud Run)
 * **Statelessness:** The application must be stateless. Use external services (Cloud Storage, Firestore) for persistence.
 * **Port Mapping:** The application MUST listen on the port defined by the `$PORT` environment variable (default 8080).
 * **Containerization:** A clean `Dockerfile` is mandatory. Keep images lightweight to reduce cold start times.
+* **Default Cloud Run Target:**
+    * **Project ID:** `fiware-api`
+    * **Service Name:** `loading-screen`
+    * **Region:** `us-central1`
+    * **Production URL:** `https://loading-screen-xkhf2gu6ka-uc.a.run.app`

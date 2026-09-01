@@ -39,6 +39,12 @@ trigger: always_on
 
 ## 5. Deployment Workflow
 * All merges to the `main` branch trigger an automated build and deploy to **Google Cloud Run** via GitHub Actions.
+* **Default GCP Target:**
+    * **Project ID:** `fiware-api`
+    * **Service:** `loading-screen`
+    * **Region:** `us-central1`
+    * **Live URL:** `https://loading-screen-xkhf2gu6ka-uc.a.run.app`
+* When deploying via Cloud Run MCP, always use `fiware-api` project, `loading-screen` service, and `us-central1` region by default without asking.
 * Environment variables (Secrets) must be managed through the Google Cloud Console, never hardcoded.
 
 ---
