@@ -78,7 +78,7 @@ resizeCanvas();
 
 const mobileUrl = `${window.location.protocol}//${window.location.host}/mobile.html`;
 QRCode.toCanvas(document.getElementById('qrCode'), mobileUrl, {
-    width: 180,
+    width: 360,
     margin: 2,
     color: { dark: '#0b1120', light: '#ffffff' }
 }, function (error) {
