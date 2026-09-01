@@ -114,8 +114,10 @@ Two always-on agent rule sets live under `.agents/rules/` and govern all AI-assi
 | **`google-github-actions/auth@v2`** | GCP authentication via service account key (`GCP_SA_KEY` secret). |
 | **`google-github-actions/setup-gcloud@v2`** | Cloud SDK setup. |
 | **`google-github-actions/deploy-cloudrun@v2`** | Cloud Run deployment. |
-| **Secrets** | `GCP_SA_KEY` (service account JSON), `GCP_PROJECT_ID` (project identifier). |
+| **Secrets** | `GCP_SA_KEY` (service account JSON), `GCP_PROJECT_ID` (`fiware-api`). |
 | **Region** | `us-central1` (configurable in workflow `env`). |
+| **Service Name** | `loading-screen` |
+| **Live URL** | `https://loading-screen-xkhf2gu6ka-uc.a.run.app` |
 
 ### External CDN Libraries
 
